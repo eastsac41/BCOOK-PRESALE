@@ -1,24 +1,72 @@
-import {
-  createThirdwebClient,
-  getContract,
-} from "thirdweb";
-import { defineChain } from "thirdweb/chains";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Afrocat Presale</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    img {
+      width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px #ff00cc;
+    }
+    button {
+      background-color: #ff00cc;
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      margin-top: 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>AFROCAT PRESALE</h1>
+  <img src="AFROCAT2.JPG" alt="Afrocat" />
+  <p>Claim your $AFROCAT tokens below</p>
+  <button onclick="claimTokens()">Claim</button>
 
-const client = createThirdwebClient({
-  clientId: "b2f0efa779d1c21ac55d26906bc544ae",
-});
+  <script type="module">
+    import {
+      createThirdwebClient,
+      getContract,
+    } from "https://esm.sh/thirdweb@4.0.0";
+    import { defineChain } from "https://esm.sh/thirdweb@4.0.0/chains";
 
-async function loadContract() {
-  const contract = await getContract({
-    client,
-    chain: defineChain(56), // BNB Smart Chain
-    address: "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb",
-  });
+    const client = createThirdwebClient({
+      clientId: "b2f0efa779d1c21ac55d26906bc544ae",
+    });
 
-  console.log("Contract loaded:", contract);
-  // you can now call methods on contract, like:
-  // const name = await contract.erc20.name();
-}
+    async function claimTokens() {
+      try {
+        const contract = await getContract({
+          client,
+          chain: defineChain(56), // BNB Smart Chain
+          address: "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb",
+        });
 
-loadContract();
+        // Example: call claim method or read token info
+        const name = await contract.erc20.name();
+        alert("Connected to token: " + name);
+        // Replace with actual contract function:
+        // await contract.erc20.claim("10");
+
+      } catch (err) {
+        console.error("Error:", err);
+        alert("Failed to load contract");
+      }
+    }
+  </script>
+</body>
+</html>
+
 
