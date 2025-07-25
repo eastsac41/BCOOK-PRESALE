@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Afrocat Presale</title>
+  <title>BCOOK Token Drop</title>
   <style>
     body {
       background-color: #111;
@@ -30,10 +30,13 @@
   </style>
 </head>
 <body>
-  <h1>AFROCAT PRESALE</h1>
-  <img src="AFROCAT2.JPG" alt="Afrocat" />
-  <p>Claim your $AFROCAT tokens below</p>
-  <button onclick="claimTokens()">Claim</button>
+  <h1>Claim Your $BCOOK</h1>
+
+  <img src="./AFROCAT2.JPG" alt="Token Art" onerror="this.style.display='none'; document.body.innerHTML += '<p style=color:red>No image found. Check AFROCAT2.JPG filename</p>';" />
+
+  <p>Connect your wallet and claim your $BCOOK airdrop below.</p>
+  <button id="connect">Connect Wallet</button>
+  <button id="claim" style="display:none;">Claim $BCOOK</button>
 
   <script type="module">
     import {
@@ -41,32 +44,46 @@
       getContract,
     } from "https://esm.sh/thirdweb@4.0.0";
     import { defineChain } from "https://esm.sh/thirdweb@4.0.0/chains";
+    import { createWallet, metamask } from "https://esm.sh/thirdweb/wallets";
 
     const client = createThirdwebClient({
-      clientId: "b2f0efa779d1c21ac55d26906bc544ae",
+      clientId: "b2f0efa779d1c21ac55d26906bc544ae", // Your actual client ID
     });
 
-    async function claimTokens() {
+    let wallet;
+
+    document.getElementById("connect").onclick = async () => {
+      try {
+        wallet = await createWallet(metamask(), { client });
+        await wallet.connect();
+        document.getElementById("claim").style.display = "inline-block";
+        alert("Wallet connected!");
+      } catch (err) {
+        console.error("Wallet connection error:", err);
+        alert("Failed to connect wallet");
+      }
+    };
+
+    document.getElementById("claim").onclick = async () => {
       try {
         const contract = await getContract({
           client,
-          chain: defineChain(56), // BNB Smart Chain
-          address: "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb",
+          chain: defineChain(56), // BNB Chain
+          address: "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb", // BCOOK token
         });
 
-        // Example: call claim method or read token info
-        const name = await contract.erc20.name();
-        alert("Connected to token: " + name);
-        // Replace with actual contract function:
+        const tokenName = await contract.erc20.name();
+        alert("Connected to token: " + tokenName);
+
+        // Uncomment the line below if you're using a claimable contract
         // await contract.erc20.claim("10");
 
+        console.log("Claim would go here (currently commented)");
       } catch (err) {
         console.error("Error:", err);
-        alert("Failed to load contract");
+        alert("Error calling contract");
       }
-    }
+    };
   </script>
 </body>
 </html>
-
-
