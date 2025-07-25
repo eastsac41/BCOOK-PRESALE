@@ -1,69 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Claim BCAT</title>
-  <script src="https://cdn.jsdelivr.net/npm/@thirdweb-dev/sdk@3/dist/browser.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 40px;
-    }
+import {
+  createThirdwebClient,
+  getContract,
+} from "thirdweb";
+import { defineChain } from "thirdweb/chains";
 
-    img {
-      width: 300px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
+const client = createThirdwebClient({
+  clientId: "b2f0efa779d1c21ac55d26906bc544ae",
+});
 
-    button {
-      padding: 12px 24px;
-      font-size: 18px;
-      background-color: #f39c12;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+async function loadContract() {
+  const contract = await getContract({
+    client,
+    chain: defineChain(56), // BNB Smart Chain
+    address: "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb",
+  });
 
-    button:hover {
-      background-color: #e67e22;
-    }
-  </style>
-</head>
-<body>
-  <h1>Claim Your BCAT Token</h1>
-  <img src="AFROCAT2.JPG" alt="Afrocat Image" />
-  <p>Click the button below to claim 1 BCAT token on BNB Smart Chain.</p>
-  <button onclick="claimToken()">Claim BCAT</button>
+  console.log("Contract loaded:", contract);
+  // you can now call methods on contract, like:
+  // const name = await contract.erc20.name();
+}
 
-  <script>
-    const { ThirdwebSDK } = window.thirdweb;
-    const contractAddress = "0x5d2088a854A01Cb768F4644BF740EB355eEC00cb"; // your BCAT token contract
-
-    async function claimToken() {
-      try {
-        if (!window.ethereum) throw new Error("MetaMask not installed");
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-
-        const sdk = new ThirdwebSDK("binance", { signer }); // BNB Chain
-
-        const tokenDrop = await sdk.getContract(contractAddress, "token-drop");
-        const tx = await tokenDrop.claim(1);
-        alert("Success! TX: " + tx.receipt.transactionHash);
-      } catch (err) {
-        console.error(err);
-        alert("Error: " + err.message);
-      }
-    }
-  </script>
-</body>
-</html>
+loadContract();
