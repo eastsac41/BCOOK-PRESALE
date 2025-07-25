@@ -1,99 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Claim $BCOOK</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: #fff;
-      font-family: sans-serif;
-      text-align: center;
-      padding: 40px;
+<script type="module">
+  import {
+    createThirdwebClient,
+    getContract,
+  } from "https://esm.sh/thirdweb@4.0.0";
+  import { metamask } from "https://esm.sh/thirdweb/wallets";
+  import { defineChain } from "https://esm.sh/thirdweb/chains";
+
+  const client = createThirdwebClient({
+    clientId: "b2f0efa779d1c21ac55d26906bc544ae",
+  });
+
+  const chain = defineChain(56); // BNB Chain
+  const tokenAddress = "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb"; // BCOOK
+
+  let wallet;
+
+  const connectBtn = document.getElementById("connect");
+  const claimBtn = document.getElementById("claim");
+
+  console.log("Script loaded. Buttons:", connectBtn, claimBtn);
+
+  connectBtn.onclick = async () => {
+    console.log("Connect clicked");
+    try {
+      const walletInstance = metamask();
+      wallet = await walletInstance.connect({
+        client,
+        chain,
+      });
+
+      const address = await wallet.getAddress();
+      alert("Connected: " + address);
+      claimBtn.style.display = "inline-block";
+    } catch (err) {
+      console.error("Connect error:", err);
+      alert("Wallet connect failed.");
     }
-    img {
-      width: 300px;
-      border-radius: 20px;
-      box-shadow: 0 0 15px #ff00cc;
+  };
+
+  claimBtn.onclick = async () => {
+    console.log("Claim clicked");
+    try {
+      const contract = await getContract({
+        client,
+        chain,
+        address: tokenAddress,
+      });
+
+      const name = await contract.erc20.name();
+      alert("Connected to token: " + name);
+
+      // Real claim line (disabled for now):
+      // await contract.erc20.claim("10");
+      alert("Claim successful (simulated)");
+    } catch (err) {
+      console.error("Claim error:", err);
+      alert("Error claiming token: " + err.message);
     }
-    button {
-      background-color: #ff00cc;
-      border: none;
-      color: white;
-      padding: 15px 30px;
-      margin-top: 20px;
-      font-size: 18px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>Claim Your $BCOOK</h1>
-  <img src="./AFROCAT2.JPG" alt="BCOOK NFT" />
-  <p>Connect your wallet and claim your $BCOOK tokens.</p>
-
-  <button id="connect">Connect Wallet</button>
-  <button id="claim" style="display:none;">Claim $BCOOK</button>
-
-  <script type="module">
-    import {
-      createThirdwebClient,
-      getContract,
-    } from "https://esm.sh/thirdweb@4.0.0";
-    import { metamask } from "https://esm.sh/thirdweb/wallets";
-    import { defineChain } from "https://esm.sh/thirdweb/chains";
-
-    const client = createThirdwebClient({
-      clientId: "b2f0efa779d1c21ac55d26906bc544ae",
-    });
-
-    const chain = defineChain(56); // BNB Chain
-    const tokenAddress = "0xf5d20B8a854A01Cb768fA644BF740EB855cE00cb"; // $BCOOK token
-
-    let wallet;
-
-    const connectBtn = document.getElementById("connect");
-    const claimBtn = document.getElementById("claim");
-
-    connectBtn.onclick = async () => {
-      try {
-        const walletInstance = metamask();
-        wallet = await walletInstance.connect({
-          client,
-          chain,
-        });
-
-        const address = await wallet.getAddress();
-        alert("Connected: " + address);
-        claimBtn.style.display = "inline-block";
-      } catch (err) {
-        console.error("Connect error:", err);
-        alert("Wallet connect failed.");
-      }
-    };
-
-    claimBtn.onclick = async () => {
-      try {
-        const contract = await getContract({
-          client,
-          chain,
-          address: tokenAddress,
-        });
-
-        // Make sure this is the right contract type
-        const name = await contract.erc20.name();
-        alert("Connected to token: " + name);
-
-        // Uncomment to enable actual claim if contract supports it
-        // await contract.erc20.claim("10");
-        alert("Claim successful (simulated)");
-      } catch (err) {
-        console.error("Claim error:", err);
-        alert("Error claiming token: " + err.message);
-      }
-    };
-  </script>
-</body>
-</html>
+  };
+</script>
